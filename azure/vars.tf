@@ -18,3 +18,5 @@ variable "AZURE_REGION" {
 variable "RESOURCE_GROUP_NAME" {}
 variable "RESOURCE_GROUP_PREFIX" {}
 variable "NETWORK_ADDRESS_SPACE" {}
+variable "NETWORK_ADDRESS_PREFIX" {}
+variable "SERVER_NAME" {}

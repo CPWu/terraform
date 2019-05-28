@@ -23,3 +23,30 @@ resource "azurerm_virtual_network" "temp_vnet" {
   resource_group_name = "${azurerm_resource_group.rg.name}"
   address_space = ["${var.NETWORK_ADDRESS_SPACE}"]
 }
+
+resource "azurerm_subnet" "temp_subnet" {
+  name = "${var.RESOURCE_GROUP_NAME}-subnet"
+  resource_group_name = "${azurerm_resource_group.rg.name}"
+  virtual_network_name = "${azurerm_virtual_network.temp_vnet.name}"
+  address_prefix = "${var.NETWORK_ADDRESS_PREFIX}"
+}
+
+resource "azurerm_network_interface" "tempServer_nic" {
+  name = "${var.RESOURCE_GROUP_NAME}-subnet"
+  location = "${var.AZURE_REGION}"
+  resource_group_name = "${azurerm_resource_group.rg.name}"
+
+  ip_configuration {
+    name = "${var.RESOURCE_GROUP_NAME}-ip"  
+    subnet_id = "${azurerm_subnet.temp_subnet.id}"
+    private_ip_address_allocation = "dynamic"
+    public_ip_address_id = "${azurerm_public_ip.tempServer_public_ip.id}"
+  }
+}
+
+resource "azurerm_public_ip" "tempServer_public_ip" {
+  name = "${var.RESOURCE_GROUP_NAME}-public-ip"
+  location = "${var.AZURE_REGION}"
+  resource_group_name = "${azurerm_resource_group.rg.name}"
+  allocation_method = "Dynamic"
+}
