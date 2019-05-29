@@ -35,6 +35,7 @@ resource "azurerm_network_interface" "tempServer_nic" {
   name = "${var.RESOURCE_GROUP_NAME}-subnet"
   location = "${var.AZURE_REGION}"
   resource_group_name = "${azurerm_resource_group.rg.name}"
+  network_security_group_id = "${azurerm_network_security_group.tempServer_nsg.id}"
 
   ip_configuration {
     name = "${var.RESOURCE_GROUP_NAME}-ip"  
@@ -48,5 +49,26 @@ resource "azurerm_public_ip" "tempServer_public_ip" {
   name = "${var.RESOURCE_GROUP_NAME}-public-ip"
   location = "${var.AZURE_REGION}"
   resource_group_name = "${azurerm_resource_group.rg.name}"
-  allocation_method = "Dynamic"
+  allocation_method = "${var.ENVIRONMENT == "development" ? "Static" : "Dynamic"}"
 }
+
+resource "azurerm_network_security_group" "tempServer_nsg" {
+  name = "${var.SERVER_NAME}-nsg"
+  location = "${var.AZURE_REGION}"
+  resource_group_name = "${azurerm_resource_group.rg.name}"
+}
+
+resource "azurerm_network_security_rule" "tempServer_nsg_rule_rdp" {
+  name = "RDP Inbound"
+  priority = 100
+  direction = "Inbound"
+  access = "Allow"
+  protocol = "TCP"
+  source_port_range = "*"
+  destination_port_range = "3389"
+  source_address_prefix = "*"
+  destination_address_prefix = "*"
+  resource_group_name = "${azurerm_resource_group.rg.name}"
+  network_security_group_name = "${azurerm_network_security_group.tempServer_nsg.name}"
+}
+
