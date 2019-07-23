@@ -2,7 +2,7 @@
 * File Name: instance.tf
 * Author: Chun Wu
 * Email: the.chun.wu@gmail.com
-* Date: May 26, 2019
+* Date: July 22, 2019
 *
 * Purpose: HCL Code (Terraform) that spins up a t2.micro instance. 
 * this is highly abstracted as we have setup seperate files to distinguish
