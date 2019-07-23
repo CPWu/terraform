@@ -1,23 +1,30 @@
+
 /***************************************************************************
 * File Name: vars.tf
 * Author: Chun Wu
 * Email: the.chun.wu@gmail.com
-* Date: May 26, 2019
+* Date: July 22, 2019
 *
-* Purpose: Defines all the variables used by HCL (Terraform) code.
-* 
-*
+* Purpose: HCL Code (Terraform) that spins up a server instance. 
+* this is highly abstracted as we have setup seperate files to distinguish
+* cloud provider, and removed passwords to a seperate file and added it to 
+* .gitignore
 ***************************************************************************/
+
+// Provider Variables
+variable "SUBSCRIPTION_ID" {}
 variable "CLIENT_ID" {}
 variable "CLIENT_SECRET" {}
 variable "TENANT_ID" {}
-variable "SUBSCRIPTION_ID" {}
-variable "AZURE_REGION" {
-    default = "canadaeast"
-}
+
+
+// Resource Information
 variable "RESOURCE_GROUP_NAME" {}
-variable "RESOURCE_GROUP_PREFIX" {}
-variable "NETWORK_ADDRESS_SPACE" {}
-variable "NETWORK_ADDRESS_PREFIX" {}
-variable "SERVER_NAME" {}
 variable "ENVIRONMENT" {}
+// Server Information
+variable "AZURE_REGION" {}
+variable "SERVER_NAME" {}
+
+// Network Information
+variable "VNET_ADDRESS_SPACE" {}
+variable "SUBNET_ADDRESS_PREFIX" {}
