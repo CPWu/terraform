@@ -28,3 +28,6 @@ variable "SERVER_NAME" {}
 // Network Information
 variable "VNET_ADDRESS_SPACE" {}
 variable "SUBNET_ADDRESS_PREFIX" {}
+
+// Azure Tags
+variable "TERRAFORM_SCRIPT_VERSION" {}

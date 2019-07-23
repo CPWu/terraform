@@ -12,6 +12,11 @@
 resource "azurerm_resource_group" "rg" {
   name                          = "${var.RESOURCE_GROUP_NAME}"
   location                      = "${var.AZURE_REGION}"
+
+  tags = {
+    version                     = "development"
+    build-version               = "${var.TERRAFORM_SCRIPT_VERSION}"
+  }
 }
 
 resource "azurerm_virtual_network" "temp_vnet" {
@@ -74,7 +79,8 @@ resource "azurerm_virtual_machine" "temp_server" {
   location                                    = "${var.AZURE_REGION}"
   resource_group_name                         = "${azurerm_resource_group.rg.name}"
   network_interface_ids                       = ["${azurerm_network_interface.temp_nic.id}"]
-  vm_size                                     = "Standard_B1s"
+  vm_size                                     = "Standard_B1ms"
+  availability_set_id                         = "${azurerm_availability_set.temp_server_availability_set.id}"
 
   storage_image_reference {
     publisher                                 = "MicrosoftWindowsServer"
@@ -92,11 +98,19 @@ resource "azurerm_virtual_machine" "temp_server" {
 
   os_profile {
     computer_name                             = "${var.SERVER_NAME}"    
-    admin_username                            = "admin"
-    admin_password                            = "password"
+    admin_username                            = "thisisnotadmin"
+    admin_password                            = "Passw0rd!"
   }
 
   os_profile_windows_config {
 
   }
+}
+
+resource "azurerm_availability_set" "temp_server_availability_set" {
+  name                                        = "${var.SERVER_NAME}-availability-set"
+  location                                    = "${var.AZURE_REGION}"
+  resource_group_name                         = "${azurerm_resource_group.rg.name}" 
+  managed                                     = true
+  platform_fault_domain_count                 = 2
 }
