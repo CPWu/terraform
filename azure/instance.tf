@@ -32,30 +32,30 @@ resource "azurerm_network_interface" "temp_nic" {
   name                                        = "${var.SERVER_NAME}-nic"
   location                                    = "${var.AZURE_REGION}"
   resource_group_name                         = "${azurerm_resource_group.rg.name}"
-  network_security_group_id                   = "${azurerm_network_security_group.tempServer_nsg.id}"
+  network_security_group_id                   = "${azurerm_network_security_group.temp_nsg.id}"
 
   ip_configuration {
     name                                      = "${var.SERVER_NAME}-ip"  
     subnet_id                                 = "${azurerm_subnet.temp_subnet.id}"
     private_ip_address_allocation             = "dynamic"
-    public_ip_address_id                      = "${azurerm_public_ip.tempServer_public_ip.id}"
+    public_ip_address_id                      = "${azurerm_public_ip.temp_public_ip.id}"
   }
 }
 
-resource "azurerm_public_ip" "tempServer_public_ip" {
+resource "azurerm_public_ip" "temp_public_ip" {
   name                                        = "${var.RESOURCE_GROUP_NAME}-public-ip"
   location                                    = "${var.AZURE_REGION}"
   resource_group_name                         = "${azurerm_resource_group.rg.name}"
   allocation_method                           = "${var.ENVIRONMENT == "development" ? "Static" : "Dynamic"}"
 }
 
-  resource "azurerm_network_security_group" "tempServer_nsg" {
+  resource "azurerm_network_security_group" "temp_nsg" {
     name                                      = "${var.SERVER_NAME}-nsg"
     location                                  = "${var.AZURE_REGION}"
     resource_group_name                       = "${azurerm_resource_group.rg.name}"
   }
 
-resource "azurerm_network_security_rule" "tempServer_nsg_rule_rdp" {
+resource "azurerm_network_security_rule" "temp_nsg_rule_rdp" {
   name                                        = "RDP Inbound"
   priority                                    = 100
   direction                                   = "Inbound"
@@ -66,6 +66,37 @@ resource "azurerm_network_security_rule" "tempServer_nsg_rule_rdp" {
   source_address_prefix                       = "*"
   destination_address_prefix                  = "*"
   resource_group_name                         = "${azurerm_resource_group.rg.name}"
-  network_security_group_name                 = "${azurerm_network_security_group.tempServer_nsg.name}"
+  network_security_group_name                 = "${azurerm_network_security_group.temp_nsg.name}"
 }
 
+resource "azurerm_virtual_machine" "temp_server" {
+  name                                        = "${var.SERVER_NAME}"
+  location                                    = "${var.AZURE_REGION}"
+  resource_group_name                         = "${azurerm_resource_group.rg.name}"
+  network_interface_ids                       = ["${azurerm_network_interface.temp_nic.id}"]
+  vm_size                                     = "Standard_B1s"
+
+  storage_image_reference {
+    publisher                                 = "MicrosoftWindowsServer"
+    offer                                     = "WindowsServer"
+    sku                                       = "2016-Datacenter-Server-Core-smalldisk"
+    version                                   = "latest"
+  }
+
+  storage_os_disk {
+    name                                      = "${var.SERVER_NAME}-os-disk"
+    caching                                   = "ReadWrite"
+    create_option                             = "FromImage"
+    managed_disk_type                         = "Standard_LRS"
+  }
+
+  os_profile {
+    computer_name                             = "${var.SERVER_NAME}"    
+    admin_username                            = "admin"
+    admin_password                            = "password"
+  }
+
+  os_profile_windows_config {
+
+  }
+}
