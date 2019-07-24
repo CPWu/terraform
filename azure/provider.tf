@@ -16,3 +16,7 @@ provider "azurerm" {
     tenant_id = "${var.TENANT_ID}"
     subscription_id = "${var.SUBSCRIPTION_ID}"
 }
+
+module "genericvm" {
+    source = "./modules/services/windows/genericvm"
+}
