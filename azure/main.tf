@@ -17,6 +17,10 @@ provider "azurerm" {
     subscription_id = "${var.SUBSCRIPTION_ID}"
 }
 
-module "genericvm" {
-    source = "./modules/services/windows/genericvm"
+module "jumpserver" {
+    source = "./modules/services/linux/jumpserver"
+    AZURE_REGION = "canadacentral"
+    RESOURCE_GROUP_NAME = "DevTest-rg"
+    VNET_ADDRESS_SPACE = "10.0.0.0/16"
+    JUMPSPACE_SUBNET_ADDRESS_PREFIX = "10.0.2.0/24"
 }
