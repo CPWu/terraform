@@ -23,4 +23,6 @@ module "jumpserver" {
     RESOURCE_GROUP_NAME = "DevTest-rg"
     VNET_ADDRESS_SPACE = "10.0.0.0/16"
     JUMPSPACE_SUBNET_ADDRESS_PREFIX = "10.0.2.0/24"
+    SERVER_NAME = "jumpserver"
+    IP_TYPE = "Static"
 }
